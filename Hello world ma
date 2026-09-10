@@ -28,4 +28,8 @@ p {
     margin: 0;
 }
 
-<h1 style="color: blue; font-size: 24px;">Hello World</h1>
+<div class="card">
+    <h1>Hello World</h1>
+    <p>This is a nicely styled card.</p>
+</div>
+
