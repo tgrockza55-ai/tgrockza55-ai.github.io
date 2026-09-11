@@ -32,15 +32,10 @@
     .background {
       position: fixed;
       inset: 0;
-
       background-size: cover;
       background-position: center;
       background-repeat: no-repeat;
-
-      transition:
-        opacity 1.5s ease-in-out,
-        transform 3s ease-in-out;
-
+      transition: opacity 1.5s ease-in-out, transform 3s ease-in-out;
       z-index: -3;
     }
 
@@ -57,54 +52,47 @@
     }
 
     /* Dark overlay */
-
     .overlay {
       position: fixed;
       inset: 0;
-
       background: rgba(0, 0, 0, 0.25);
-
       z-index: -2;
     }
 
     /* =========================
-       MAIN CARD
+       MAIN CARD (ปรับตำแหน่งมาด้านล่าง)
     ========================= */
 
     .card {
       position: absolute;
 
-      top: 50%;
+      /* เลื่อนมาเกาะด้านล่าง ห่างจากขอบล่าง 50px */
+      bottom: 50px; 
       left: 50%;
 
-      transform: translate(-50%, -50%);
+      /* จัดให้อยู่กึ่งกลางในแนวนอน */
+      transform: translateX(-50%);
 
       padding: 35px 45px;
-
       border-radius: 24px;
-
       background: rgba(255, 255, 255, 0.85);
 
+      /* เอฟเฟกต์กระจกฝ้า */
       backdrop-filter: blur(10px);
       -webkit-backdrop-filter: blur(10px);
 
       text-align: center;
-
-      box-shadow:
-        0 15px 40px rgba(0, 0, 0, 0.2);
-
+      box-shadow: 0 15px 40px rgba(0, 0, 0, 0.2);
+      
+      /* ให้อยู่เลเยอร์บนสุด */
       z-index: 10;
     }
 
     h1 {
       margin: 0 0 25px 0;
-
       color: #1e293b;
-
       font-size: clamp(2rem, 7vw, 4rem);
-
       font-weight: 700;
-
       white-space: nowrap;
     }
 
@@ -114,32 +102,20 @@
 
     #roseButton {
       border: none;
-
       padding: 14px 30px;
-
       border-radius: 999px;
-
       background: #ff6b81;
       color: white;
-
       font-size: 1.1rem;
       font-weight: 700;
-
       cursor: pointer;
-
-      box-shadow:
-        0 6px 15px rgba(0, 0, 0, 0.2);
-
-      transition:
-        transform 0.15s ease,
-        box-shadow 0.15s ease;
+      box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2);
+      transition: transform 0.15s ease, box-shadow 0.15s ease;
     }
 
     #roseButton:hover {
       transform: scale(1.05);
-
-      box-shadow:
-        0 8px 20px rgba(0, 0, 0, 0.25);
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.25);
     }
 
     #roseButton:active {
@@ -152,13 +128,11 @@
 
     #roseContainer {
       position: fixed;
-
       inset: 0;
-
       pointer-events: none;
-
+      
+      /* ดอกกุหลาบจะอยู่หลังกล่องข้อความ (z-index น้อยกว่า card) */
       z-index: 5;
-
       overflow: hidden;
     }
 
@@ -168,27 +142,20 @@
 
     .rose {
       position: absolute;
-
       width: 100px;
-
       height: auto;
-
       user-select: none;
-
       will-change: transform;
-
-      filter:
-        drop-shadow(0 8px 8px rgba(0, 0, 0, 0.25));
-
+      filter: drop-shadow(0 8px 8px rgba(0, 0, 0, 0.25));
       transform-origin: center center;
     }
 
     /* Mobile */
-
     @media (max-width: 600px) {
-
       .card {
+        bottom: 40px; /* ในมือถือให้ขยับลงมานิดนึง */
         padding: 28px 22px;
+        width: 90%; /* บังคับความกว้างไม่ให้ชิดขอบซ้ายขวาเกินไป */
       }
 
       h1 {
@@ -210,293 +177,142 @@
 <body>
 
   <!-- BACKGROUND -->
-
   <div id="bg1" class="background"></div>
   <div id="bg2" class="background"></div>
-
   <div class="overlay"></div>
 
-
   <!-- MAIN CARD -->
-
   <div class="card">
-
     <h1>luv u jao toua lek</h1>
-
     <button id="roseButton">
       PRESS ROSE
     </button>
-
   </div>
 
-
   <!-- ROSES -->
-
   <div id="roseContainer"></div>
 
-
   <script>
-
     /* ==================================================
        BACKGROUND MORPH
     ================================================== */
-
     const bg1 = document.getElementById("bg1");
     const bg2 = document.getElementById("bg2");
-
     let showingFirst = true;
 
     setInterval(() => {
-
       if (showingFirst) {
-
         bg1.style.opacity = "0";
         bg1.style.transform = "scale(1)";
-
         bg2.style.opacity = "1";
-        bg2.style.transform = "scale(1.05");
-
+        bg2.style.transform = "scale(1.05)";
       } else {
-
         bg1.style.opacity = "1";
         bg1.style.transform = "scale(1.05)";
-
         bg2.style.opacity = "0";
         bg2.style.transform = "scale(1)";
-
       }
-
       showingFirst = !showingFirst;
-
     }, 3000);
 
 
     /* ==================================================
        ROSE SYSTEM
     ================================================== */
-
     const button = document.getElementById("roseButton");
     const container = document.getElementById("roseContainer");
-
     let roseCount = 0;
 
-
     button.addEventListener("click", () => {
-
       createRose();
-
     });
 
-
     function createRose() {
-
       roseCount++;
-
       const rose = document.createElement("img");
-
       rose.src = "IMG3.png";
-
       rose.className = "rose";
-
       container.appendChild(rose);
-
 
       /* ================================================
          SCREEN SIZE
       ================================================ */
-
       const screenWidth = window.innerWidth;
       const screenHeight = window.innerHeight;
-
 
       /* ================================================
          RANDOM SIZE
       ================================================ */
-
-      const size =
-        70 + Math.random() * 60;
-
+      const size = 70 + Math.random() * 60;
       rose.style.width = size + "px";
-
 
       /* ================================================
          RANDOM ROTATION
       ================================================ */
-
-      const startRotation =
-        -360 + Math.random() * 720;
-
-      const finalRotation =
-        -20 + Math.random() * 40;
-
+      const startRotation = -360 + Math.random() * 720;
+      const finalRotation = -20 + Math.random() * 40;
 
       /* ================================================
          RANDOM ENTRY SIDE
       ================================================ */
-
-      const sides = [
-        "left",
-        "right",
-        "top"
-      ];
-
-      const side =
-        sides[Math.floor(Math.random() * sides.length)];
-
+      const sides = ["left", "right", "top"];
+      const side = sides[Math.floor(Math.random() * sides.length)];
 
       let startX;
       let startY;
 
-
       if (side === "left") {
-
         startX = -size - 50;
-
-        startY =
-          Math.random() *
-          screenHeight *
-          0.75;
-
+        startY = Math.random() * screenHeight * 0.75;
+      } else if (side === "right") {
+        startX = screenWidth + 50;
+        startY = Math.random() * screenHeight * 0.75;
+      } else {
+        startX = Math.random() * screenWidth;
+        startY = -size - 50;
       }
-
-      else if (side === "right") {
-
-        startX =
-          screenWidth + 50;
-
-        startY =
-          Math.random() *
-          screenHeight *
-          0.75;
-
-      }
-
-      else {
-
-        startX =
-          Math.random() *
-          screenWidth;
-
-        startY =
-          -size - 50;
-
-      }
-
 
       /* ================================================
          PILE POSITION
-         
-         Roses pile up around the center-bottom.
-         ================================================ */
-
-      const pileWidth =
-        Math.min(screenWidth * 0.55, 500);
-
-      const pileX =
-        screenWidth / 2
-        - pileWidth / 2
-        + Math.random() * pileWidth;
-
-
-      /*
-        Each new rose gets a slightly higher
-        position depending on how many roses exist.
-      */
-
-      const pileLevel =
-        Math.floor((roseCount - 1) / 5);
-
-
-      const baseY =
-        screenHeight
-        - size
-        - 20
-        - pileLevel * 35;
-
-
-      /*
-        Small random vertical variation
-        makes the pile look natural.
-      */
-
-      const finalY =
-        baseY
-        - Math.random() * 20;
-
+      ================================================ */
+      const pileWidth = Math.min(screenWidth * 0.55, 500);
+      const pileX = screenWidth / 2 - pileWidth / 2 + Math.random() * pileWidth;
+      const pileLevel = Math.floor((roseCount - 1) / 5);
+      
+      const baseY = screenHeight - size - 20 - pileLevel * 35;
+      const finalY = baseY - Math.random() * 20;
 
       /* ================================================
          START POSITION
       ================================================ */
-
       rose.style.left = "0px";
       rose.style.top = "0px";
-
-      rose.style.transform =
-        `translate(${startX}px, ${startY}px)
-         rotate(${startRotation}deg)
-         scale(0.3)`;
-
+      rose.style.transform = `translate(${startX}px, ${startY}px) rotate(${startRotation}deg) scale(0.3)`;
 
       /* ================================================
-         FORCE BROWSER TO REGISTER START
+         FORCE BROWSER TO REGISTER START & ANIMATE
       ================================================ */
-
       requestAnimationFrame(() => {
-
         requestAnimationFrame(() => {
+          
+          /* Movement */
+          rose.style.transition = "transform 1.4s cubic-bezier(.15,.85,.25,1.15)";
+          rose.style.transform = `translate(${pileX}px, ${finalY}px) rotate(${finalRotation}deg) scale(1)`;
 
-          /*
-            First movement:
-            fly / bounce toward center
-          */
-
-          rose.style.transition =
-            "transform 1.4s cubic-bezier(.15,.85,.25,1.15)";
-
-
-          rose.style.transform =
-            `translate(${pileX}px, ${finalY}px)
-             rotate(${finalRotation}deg)
-             scale(1)`;
-
-
-          /* ==========================================
-             ADD LITTLE BOUNCE AFTER LANDING
-          ========================================== */
-
+          /* Bounce after landing */
           setTimeout(() => {
-
-            rose.style.transition =
-              "transform 0.25s ease-out";
-
-
-            rose.style.transform =
-              `translate(${pileX}px, ${finalY - 12}px)
-               rotate(${finalRotation}deg)
-               scale(1.05)`;
-
+            rose.style.transition = "transform 0.25s ease-out";
+            rose.style.transform = `translate(${pileX}px, ${finalY - 12}px) rotate(${finalRotation}deg) scale(1.05)`;
 
             setTimeout(() => {
-
-              rose.style.transition =
-                "transform 0.25s ease-in-out";
-
-
-              rose.style.transform =
-                `translate(${pileX}px, ${finalY}px)
-                 rotate(${finalRotation}deg)
-                 scale(1)`;
-
+              rose.style.transition = "transform 0.25s ease-in-out";
+              rose.style.transform = `translate(${pileX}px, ${finalY}px) rotate(${finalRotation}deg) scale(1)`;
             }, 250);
-
           }, 1400);
 
         });
-
       });
-
     }
-
   </script>
 
 </body>
