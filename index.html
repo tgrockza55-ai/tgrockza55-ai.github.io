@@ -60,32 +60,26 @@
     }
 
     /* =========================
-       MAIN CARD (ปรับตำแหน่งมาด้านล่าง)
+       MAIN CARD
     ========================= */
 
     .card {
       position: absolute;
-
-      /* เลื่อนมาเกาะด้านล่าง ห่างจากขอบล่าง 50px */
       bottom: 50px; 
       left: 50%;
-
-      /* จัดให้อยู่กึ่งกลางในแนวนอน */
       transform: translateX(-50%);
 
       padding: 35px 45px;
       border-radius: 24px;
       background: rgba(255, 255, 255, 0.85);
 
-      /* เอฟเฟกต์กระจกฝ้า */
       backdrop-filter: blur(10px);
       -webkit-backdrop-filter: blur(10px);
 
       text-align: center;
       box-shadow: 0 15px 40px rgba(0, 0, 0, 0.2);
       
-      /* ให้อยู่เลเยอร์บนสุด */
-      z-index: 10;
+      z-index: 10; /* เลเยอร์กล่องข้อความ */
     }
 
     h1 {
@@ -131,8 +125,8 @@
       inset: 0;
       pointer-events: none;
       
-      /* ดอกกุหลาบจะอยู่หลังกล่องข้อความ (z-index น้อยกว่า card) */
-      z-index: 5;
+      /* เปลี่ยนให้ซ้อนอยู่ "ด้านหน้า" กล่องข้อความ (มากกว่า 10) */
+      z-index: 20; 
       overflow: hidden;
     }
 
@@ -153,23 +147,13 @@
     /* Mobile */
     @media (max-width: 600px) {
       .card {
-        bottom: 40px; /* ในมือถือให้ขยับลงมานิดนึง */
+        bottom: 40px; 
         padding: 28px 22px;
-        width: 90%; /* บังคับความกว้างไม่ให้ชิดขอบซ้ายขวาเกินไป */
+        width: 90%; 
       }
-
-      h1 {
-        font-size: 2rem;
-      }
-
-      #roseButton {
-        padding: 12px 25px;
-        font-size: 1rem;
-      }
-
-      .rose {
-        width: 75px;
-      }
+      h1 { font-size: 2rem; }
+      #roseButton { padding: 12px 25px; font-size: 1rem; }
+      .rose { width: 75px; }
     }
   </style>
 </head>
@@ -217,98 +201,101 @@
 
 
     /* ==================================================
-       ROSE SYSTEM
+       ROSE SYSTEM (อัปเดตระบบเด้งและการชน)
     ================================================== */
     const button = document.getElementById("roseButton");
     const container = document.getElementById("roseContainer");
-    let roseCount = 0;
+    const card = document.querySelector('.card'); // ดึงข้อมูลกล่องข้อความมาคำนวณ
 
     button.addEventListener("click", () => {
       createRose();
     });
 
     function createRose() {
-      roseCount++;
       const rose = document.createElement("img");
       rose.src = "IMG3.png";
       rose.className = "rose";
       container.appendChild(rose);
 
-      /* ================================================
-         SCREEN SIZE
-      ================================================ */
       const screenWidth = window.innerWidth;
       const screenHeight = window.innerHeight;
 
-      /* ================================================
-         RANDOM SIZE
-      ================================================ */
-      const size = 70 + Math.random() * 60;
+      // 1. ขนาดของดอกกุหลาบ
+      const size = 60 + Math.random() * 50;
       rose.style.width = size + "px";
 
-      /* ================================================
-         RANDOM ROTATION
-      ================================================ */
+      // 2. หมุนตอนเริ่ม และหมุนตอนตก
       const startRotation = -360 + Math.random() * 720;
-      const finalRotation = -20 + Math.random() * 40;
+      const finalRotation = -45 + Math.random() * 90;
 
-      /* ================================================
-         RANDOM ENTRY SIDE
-      ================================================ */
+      // 3. จุดเกิด (สุ่มลอยมาจากขอบจอ)
       const sides = ["left", "right", "top"];
       const side = sides[Math.floor(Math.random() * sides.length)];
-
-      let startX;
-      let startY;
+      let startX, startY;
 
       if (side === "left") {
         startX = -size - 50;
-        startY = Math.random() * screenHeight * 0.75;
+        startY = Math.random() * screenHeight * 0.5;
       } else if (side === "right") {
         startX = screenWidth + 50;
-        startY = Math.random() * screenHeight * 0.75;
+        startY = Math.random() * screenHeight * 0.5;
       } else {
         startX = Math.random() * screenWidth;
         startY = -size - 50;
       }
 
-      /* ================================================
-         PILE POSITION
-      ================================================ */
-      const pileWidth = Math.min(screenWidth * 0.55, 500);
-      const pileX = screenWidth / 2 - pileWidth / 2 + Math.random() * pileWidth;
-      const pileLevel = Math.floor((roseCount - 1) / 5);
+      // 4. จุดตก (หลบกล่องข้อความ ให้ไปตกซ้ายหรือขวา)
+      const cardRect = card.getBoundingClientRect();
+      let pileX;
       
-      const baseY = screenHeight - size - 20 - pileLevel * 35;
-      const finalY = baseY - Math.random() * 20;
+      // สุ่มว่าจะให้เด้งไปตกฝั่งซ้าย หรือ ฝั่งขวาของกล่อง
+      if (Math.random() > 0.5) {
+        // ตกฝั่งซ้าย (สุ่มจากขอบซ้ายสุดของจอ จนถึง ขอบซ้ายของกล่อง)
+        pileX = Math.random() * (cardRect.left - (size / 2));
+        // เผื่อขอบหน้าจอไม่ให้ทะลุ
+        pileX = Math.max(10, Math.min(pileX, cardRect.left - size + 20));
+      } else {
+        // ตกฝั่งขวา (สุ่มจากขอบขวาของกล่อง จนถึง ขอบขวาสุดของจอ)
+        pileX = cardRect.right - 20 + Math.random() * (screenWidth - cardRect.right);
+        pileX = Math.max(cardRect.right - 20, Math.min(pileX, screenWidth - size - 10));
+      }
 
-      /* ================================================
-         START POSITION
-      ================================================ */
+      // 5. สุ่มความสูงของจุดตก (สูงต่ำไม่เท่ากัน กองแบบธรรมชาติขึ้น)
+      const finalY = screenHeight - size - 10 - (Math.random() * 120);
+
+      // 6. สุ่มความแรงในการเด้ง (Bounce Height)
+      const bounceHeight = 30 + Math.random() * 80; // เด้งสูงตั้งแต่ 30px ถึง 110px
+
+      // 7. ให้เด้งกระเด็นออกด้านข้างนิดหน่อยตอนตกถึงพื้น (จำลองฟิสิกส์การชน)
+      const bounceTargetX = pileX + (Math.random() > 0.5 ? 25 : -25);
+
+      // ตั้งค่าจุดเริ่มต้น
       rose.style.left = "0px";
       rose.style.top = "0px";
       rose.style.transform = `translate(${startX}px, ${startY}px) rotate(${startRotation}deg) scale(0.3)`;
 
       /* ================================================
-         FORCE BROWSER TO REGISTER START & ANIMATE
+         ANIMATION FLOW
       ================================================ */
       requestAnimationFrame(() => {
         requestAnimationFrame(() => {
           
-          /* Movement */
-          rose.style.transition = "transform 1.4s cubic-bezier(.15,.85,.25,1.15)";
+          // สเต็ปที่ 1: ลอยมาตกที่พื้น (หลบกล่องข้อความแล้ว)
+          rose.style.transition = "transform 1.2s cubic-bezier(.15,.85,.25,1.15)";
           rose.style.transform = `translate(${pileX}px, ${finalY}px) rotate(${finalRotation}deg) scale(1)`;
 
-          /* Bounce after landing */
+          // สเต็ปที่ 2: พอตกถึงพื้น ให้เด้งขึ้น! (สูงต่ำไม่เท่ากัน)
           setTimeout(() => {
-            rose.style.transition = "transform 0.25s ease-out";
-            rose.style.transform = `translate(${pileX}px, ${finalY - 12}px) rotate(${finalRotation}deg) scale(1.05)`;
+            rose.style.transition = "transform 0.3s ease-out";
+            rose.style.transform = `translate(${bounceTargetX}px, ${finalY - bounceHeight}px) rotate(${finalRotation + 15}deg) scale(1.05)`;
 
+            // สเต็ปที่ 3: ตกลงมานอนนิ่งๆ บนพื้นหลังเด้ง
             setTimeout(() => {
-              rose.style.transition = "transform 0.25s ease-in-out";
-              rose.style.transform = `translate(${pileX}px, ${finalY}px) rotate(${finalRotation}deg) scale(1)`;
-            }, 250);
-          }, 1400);
+              rose.style.transition = "transform 0.35s ease-in";
+              rose.style.transform = `translate(${bounceTargetX}px, ${finalY}px) rotate(${finalRotation}deg) scale(1)`;
+            }, 300);
+
+          }, 1200);
 
         });
       });
